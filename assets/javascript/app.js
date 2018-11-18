@@ -11,117 +11,124 @@ var config = {
 };
 firebase.initializeApp(config);
 
-    // Create a variable to reference the database
-    var database = firebase.database();
+// Create a variable to reference the database
+var database = firebase.database();
 
-    // Initial Values
-    var name = "";
-    var destination = "";
-    var firstTrainTime = "";            // Use HH:mm - international time standard
-    var frequency = "";                 // In minutes
-    
-    // Capture Button Click
-    $("#add-train-submit-button").on("click", function(event) {
+// Initial Values
+var name = "";
+var destination = "";
+var firstTrainTime = "";            // Use HH:mm - international time standard
+var frequency = "";                 // In minutes
 
-        // Don't refresh the page!
-        event.preventDefault();
+// Capture Button Click
+$("#add-train-submit-button").on("click", function(event) {
 
-        // Capture inputs locally Firebase database
-        name = $("#train-name-input").val().trim();
-        destination = $("#destination-input").val().trim();
-        firstTrainTime = $("#first-train-time-input").val().trim();                
-        frequency = $("#frequency-input").val().trim();
+    // Don't refresh the page!
+    event.preventDefault();
 
-        // Testing
-        console.log(name);
-        console.log(destination);
-        console.log(firstTrainTime);
-        console.log(frequency);
+    // Capture inputs locally Firebase database
+    name = $("#train-name-input").val().trim();
+    destination = $("#destination-input").val().trim();
+    firstTrainTime = $("#first-train-time-input").val().trim();                
+    frequency = $("#frequency-input").val().trim();
 
-        // Update Firebase database
-        database.ref().push({                   // Using .push from .set for data additions over replacement
-            name: name,
-            destination: destination,
-            firstTrainTime: firstTrainTime,
-            frequency: frequency
-        });
+    // Testing
+    console.log(name);
+    console.log(destination);
+    console.log(firstTrainTime);
+    console.log(frequency);
+
+    // Update Firebase database
+    database.ref().push({                   // Using .push from .set for data additions over replacement
+        name: name,
+        destination: destination,
+        firstTrainTime: firstTrainTime,
+        frequency: frequency
     });
+});
 
-// Firebase watcher + initial loader; this behaves similarly to .on("value")
+// Firebase watcher + initial page loader; this behaves similarly to .on("value")
 database.ref().on("child_added", function(childSnapshot) {
 
-    // Log everything that's coming out of snapshot
+    // Testing -- Log everything that's coming out of snapshot
     console.log(childSnapshot.val().name);
     console.log(childSnapshot.val().destination);
     console.log(childSnapshot.val().firstTrainTime);
     console.log(childSnapshot.val().frequency);
 
-    // full list of items to the display
-    // addEmployeeRow(childSnapshot.val().name, childSnapshot.val().role, childSnapshot.val().startDate, childSnapshot.val().monthlyRate);
+    // Set up local variables for next arrival time and minutes away
+    var nextArrival = calculateNextArrival(childSnapshot.val().firstTrainTime, childSnapshot.val().frequency);
+    var minutesAway = calculateMinsAway(childSnapshot.val().firstTrainTime, childSnapshot.val().frequency);
 
+    // Full list of items to the display
     $(".schedule-content").append("<div class='row'> " +
         '<div class="col-lg-2" id="train-name">' + childSnapshot.val().name + "</div>" +
         '<div class="col-lg-2" id="train-destination">' + childSnapshot.val().destination + "</div>" +
         '<div class="col-lg-2" id="train-frequency">' + childSnapshot.val().frequency + "</div>" +
-        '<div class="col-lg-2" id="next-arrival">' + "10" + "</div>" +
-        '<div class="col-lg-2" id="minutes-away">'  + "11" + "</div>"
-        // '<div class="col-lg-2" id="total-billed">' + childSnapshot.val().monthlyRate + "</div>" + 
+        '<div class="col-lg-2" id="next-arrival">' + nextArrival + "</div>" +
+        '<div class="col-lg-2" id="minutes-away">'  + minutesAway + "</div>"
     + "</div>" );
 
     // Handle any errors
     }, function(errorObject) {
     console.log("Errors handled: " + errorObject.code);
 
-});
+}); // End Firebase watcher and initial page loader
 
-// Add Employee Row function
-function addEmployeeRow (empName, empRole, empDate, empRate) {
+// Calculate next arrival function
+function calculateNextArrival(firstTime, trainFrequency) {
 
-    // Add row to employee-content
-    let newRow = $("<div>").addClass("row");
+    // First Time (pushed back 1 year to make sure it comes before current time)
+    var firstTimeConverted = moment(firstTime, "HH:mm").subtract(1, "years");
+    console.log(firstTimeConverted);
 
-    // console.log("addEmployeeRow function called");
+    // Current Time
+    var currentTime = moment();
+    console.log("CURRENT TIME: " + moment(currentTime).format("hh:mm"));
 
-    let newDiv = $("<div>").addClass("col-lg-2");
-    newDiv.text = empName;
-    // newRow.append(newDiv);
-    newRow.text = newRow.text + newDiv;
+    // Difference between the times
+    var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
+    console.log("DIFFERENCE IN TIME: " + diffTime);
 
-    // let newDiv2 = $("<div>").addClass("col-lg-2");
-    // newDiv2.text = empRole;
-    // // newRow.append(newDiv2);
-    // newRow.html = newRow.text + newDiv2;
+    // Time apart (remainder)
+    var timeRemainder = diffTime % trainFrequency;
+    console.log(timeRemainder);
 
-    // let newDiv3 = $("<div>").addClass("col-lg-2");
-    // newDiv3.text = empDate;
-    // // newRow.append(newDiv3);
-    // newRow.html = newRow.text + newDiv3;
+    // Minute Until Train
+    var timeMinutesTillTrain = trainFrequency - timeRemainder;
+    // console.log("MINUTES TILL TRAIN: " + tMinutesTillTrain);
 
-    // let newDiv4 = $("<div>").addClass("col-lg-2");
-    // newDiv4.text = "";                                // Fill in Months Worked later
-    // // newRow.append(newDiv4);
-    // newRow.html = newRow.text + newDiv4;
+    // Next Train
+    var nextTrain = moment().add(timeMinutesTillTrain, "minutes");
+    console.log("ARRIVAL TIME: " + moment(nextTrain).format("hh:mm"));
 
-    // let newDiv5 = $("<div>").addClass("col-lg-2");
-    // newDiv5.text = empRate;
-    // // newRow.append(newDiv5);
-    // newRow.html = newRow.text + newDiv5;
+    return moment(nextTrain).format("hh:mm");
 
-    // let newDiv6 = $("<div>").addClass("col-lg-2");
-    // newDiv6.text = "";                               // Fill in Total Billed later
-    // // newRow.append(newDiv6);
-    // newRow.html = newRow.text + newDiv6;
+} // End calculate next arrival function
 
-    // $(".employee-content").append(newRow);
+// Calculate minutes away function
+function calculateMinsAway(firstTime, trainFrequency) {
 
-                // <div class="row">
-                // <div class="col-lg-2" id="emp-name">Test</div>
-                // <div class="col-lg-2" id="emp-role">Test</div>
-                // <div class="col-lg-2" id="start-date">Test</div>
-                // <div class="col-lg-2" id="months-worked">Test</div>
-                // <div class="col-lg-2" id="monthly-rate">Test</div>
-                // <div class="col-lg-2" id="total-billed">Test</div>
-                // </div>
+    // First Time (pushed back 1 year to make sure it comes before current time)
+    var firstTimeConverted = moment(firstTime, "HH:mm").subtract(1, "years");
+    console.log(firstTimeConverted);
 
-} // End add employee row function
+    // Current Time
+    var currentTime = moment();
+    console.log("CURRENT TIME: " + moment(currentTime).format("hh:mm"));
 
+    // Difference between the times
+    var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
+    console.log("DIFFERENCE IN TIME: " + diffTime);
+
+    // Time apart (remainder)
+    var timeRemainder = diffTime % trainFrequency;
+    console.log(timeRemainder);
+
+    // Minute Until Train
+    var timeMinutesTillTrain = trainFrequency - timeRemainder;
+    console.log("MINUTES TILL TRAIN: " + timeMinutesTillTrain);
+
+    return timeMinutesTillTrain;
+
+} // End calculate minutes away function
