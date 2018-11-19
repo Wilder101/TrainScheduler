@@ -1,5 +1,5 @@
 # TrainScheduler
-::bullettrain_side:
+:bullettrain_side:
 ### A train scheduler that incorporates Firebase and Moment.js for arrival and departure data.
 
 **What the project does:**
