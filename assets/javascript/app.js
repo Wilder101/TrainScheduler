@@ -17,7 +17,7 @@ var database = firebase.database();
 // Initial Values
 var name = "";                  // Name of train
 var destination = "";           // Name of destination
-var firstTrainTime = "";        // Use HH:mm - international time standard
+var firstTrainTime = "";        // Use HH:mm - 24-hour international time standard, ISO 8601
 var frequency = 0;              // In minutes
 
 // Capture Button Click
