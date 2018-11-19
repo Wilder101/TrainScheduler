@@ -1,6 +1,10 @@
 /* TrainScheduler by WBM, 11/13/18, style.css file */
 /* Color reference: https://www.canva.com/learn/website-color-schemes/ */
 
+body {
+    background-color: black;
+}
+
 /* Jumbotron */
 #jumbotron-texture  {
     background-color: #C0B283;          /* pale gold */
