@@ -1,2 +1,27 @@
 /* TrainScheduler by WBM, 11/13/18, style.css file */
+/* Color reference: https://www.canva.com/learn/website-color-schemes/ */
 
+/* Jumbotron */
+#jumbotron-texture  {
+    background-color: #C0B283;          /* pale gold */
+    color: #373737;                     /* charcoal  */
+}
+
+/* Section headings */
+.section-heading {
+    background-color: #DCD0C0;          /* silk      */
+    color: #373737;                     /* charcoal  */
+}
+
+/* Section content */
+.section-content {
+    background-color: #F4F4F4;          /* paper     */
+    color: #373737;                     /* charcoal  */
+}
+
+/* Button adjust */
+#add-train-submit-button {
+    background-color: #C0B283;          /* pale gold */
+    color: #373737;                     /* charcoal  */
+    border: #373737;                    /* charcoal  */
+}

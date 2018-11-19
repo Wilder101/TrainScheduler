@@ -36,7 +36,8 @@
 
             <!-- Jumbotron header -->
             <div class="col-lg-12">
-                <div class="jumbotron jumbotron-fluid">
+                <!-- <div class="jumbotron jumbotron-fluid" id="jumbotron-texture"> -->
+                <div class="jumbotron container-fluid" id="jumbotron-texture">
                     <div class="container">
                         <h1 class="display-4 text-center">Train Scheduler</h1>
                         <p class="lead text-center">A Comprehensive Directory of Train Schedules</p>
@@ -47,8 +48,8 @@
             <!-- Current train schedule -->
             <div class="col-lg-12">
                 <div class="card card-default">
-                    <div class="card-header font-weight-bold">Current Train Schedule</div>
-                    <div class="card-body" id="current-schedule">
+                    <div class="card-header font-weight-bold section-heading">Current Train Schedule</div>
+                    <div class="card-body section-content" id="current-schedule">
                         <hr>
                         <div class="row">
                             <div class="col-lg-2 font-weight-bold">Train Name</div>
@@ -71,10 +72,10 @@
             <!-- Add Train Form -->
             <div class="col-lg-12">
                 <div class="card card-default">
-                    <div class="card-header font-weight-bold">
+                    <div class="card-header font-weight-bold section-heading">
                         Add Train
                     </div>
-                    <div class="card-body">
+                    <div class="card-body section-content">
                         <form class="form">
                             <div class="form-group">
                                 <label for="search-term" class="font-weight-bold">Train Name</label>
